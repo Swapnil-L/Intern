@@ -1,0 +1,53 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+data = pd.read_csv('Data Cleaning and Preprocessing.csv')
+
+# 1. Handling Missing Values:
+# Check for missing values
+missing_values = data.isnull().sum()
+print("Missing Values:\n", missing_values)
+
+# Handle missing values by imputation or removal
+# Example: Replace missing values in a column with the mean
+data['column_with_missing_values'].fillna(data['column_with_missing_values'].mean(), inplace=True)
+
+# 2. Removing Duplicate Rows:
+# Check for duplicate rows
+duplicate_rows = data.duplicated().sum()
+print("Duplicate Rows:", duplicate_rows)
+
+# Remove duplicate rows
+data = data.drop_duplicates()
+
+# 3. Handling Outliers:
+# Use visualization to detect outliers, e.g., with box plots
+plt.figure(figsize=(8, 6))
+sns.boxplot(data=data, x='column_with_outliers')
+plt.title('Box Plot for Outliers Detection')
+plt.show()
+
+# Decide on an outlier handling strategy, e.g., removing or transforming outliers
+# Example: Removing outliers using the IQR method
+Q1 = data['column_with_outliers'].quantile(0.25)
+Q3 = data['column_with_outliers'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+data = data[(data['column_with_outliers'] >= lower_bound) & (data['column_with_outliers'] <= upper_bound)]
+
+# 4. Data Visualization (Optional):
+# Create visualizations to understand the data better
+# Example: Histogram for a numeric column
+plt.figure(figsize=(8, 6))
+sns.histplot(data=data, x='numeric_column')
+plt.title('Histogram for Numeric Column')
+plt.show()
+
+# 5. Save the Cleaned Dataset:
+# Save the cleaned dataset to a new CSV file
+data.to_csv('cleaned_data.csv', index=False)
